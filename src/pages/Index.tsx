@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,15 +179,72 @@ const Index = () => {
                     <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-purple-400 focus:ring-purple-400">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-white/20">
-                      <SelectItem value="0.5">0.5x (Slower)</SelectItem>
-                      <SelectItem value="0.75">0.75x</SelectItem>
-                      <SelectItem value="1">1x (Normal)</SelectItem>
-                      <SelectItem value="1.25">1.25x</SelectItem>
-                      <SelectItem value="1.5">1.5x</SelectItem>
-                      <SelectItem value="2">2x (Faster)</SelectItem>
+                    <SelectContent className="bg-slate-800 border-white/20 text-white">
+                      <SelectItem value="0.5" className="text-white hover:bg-slate-700 focus:bg-slate-700">0.5x (Slower)</SelectItem>
+                      <SelectItem value="0.75" className="text-white hover:bg-slate-700 focus:bg-slate-700">0.75x</SelectItem>
+                      <SelectItem value="1" className="text-white hover:bg-slate-700 focus:bg-slate-700">1x (Normal)</SelectItem>
+                      <SelectItem value="1.25" className="text-white hover:bg-slate-700 focus:bg-slate-700">1.25x</SelectItem>
+                      <SelectItem value="1.5" className="text-white hover:bg-slate-700 focus:bg-slate-700">1.5x</SelectItem>
+                      <SelectItem value="2" className="text-white hover:bg-slate-700 focus:bg-slate-700">2x (Faster)</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+
+              {/* Quick Range Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-200">
+                  Quick Range Selection
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setStartVideo("1");
+                      setEndVideo("10");
+                    }}
+                    className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                  >
+                    First 10
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setStartVideo("1");
+                      setEndVideo("25");
+                    }}
+                    className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                  >
+                    First 25
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setStartVideo("1");
+                      setEndVideo("50");
+                    }}
+                    className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                  >
+                    First 50
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setStartVideo("1");
+                      setEndVideo("");
+                    }}
+                    className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                  >
+                    All Videos
+                  </Button>
                 </div>
               </div>
 

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,14 @@ interface ApiKeyInputProps {
 }
 
 export const ApiKeyInput = ({ onApiKeySet, hasApiKey }: ApiKeyInputProps) => {
-  const [apiKey, setApiKey] = useState("");
+  const [apiKey, setApiKey] = useState("AIzaSyADh4VQPgKmBMm6fIBscRIVDPurc9kAbv4");
+
+  // Auto-set the API key on component mount
+  useEffect(() => {
+    if (apiKey.trim() && !hasApiKey) {
+      onApiKeySet(apiKey.trim());
+    }
+  }, [apiKey, hasApiKey, onApiKeySet]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,24 +45,24 @@ export const ApiKeyInput = ({ onApiKeySet, hasApiKey }: ApiKeyInputProps) => {
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
           <Key className="h-5 w-5" />
-          YouTube API Key Required
+          YouTube API Key Configuration
         </CardTitle>
         <CardDescription className="text-gray-300">
-          To analyze playlists, you need a YouTube Data API v3 key.{" "}
+          API key is pre-configured. You can modify it if needed.{" "}
           <a 
             href="https://developers.google.com/youtube/v3/getting-started" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-blue-400 hover:text-blue-300 inline-flex items-center gap-1"
           >
-            Get one here <ExternalLink className="h-3 w-3" />
+            Learn more <ExternalLink className="h-3 w-3" />
           </a>
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            type="password"
+            type="text"
             placeholder="Enter your YouTube API key..."
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
