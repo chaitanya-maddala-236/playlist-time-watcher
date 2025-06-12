@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Clock, Play, Youtube, Calculator, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { youtubeService, type AnalysisResult } from "@/services/youtubeService";
+import { ApiKeyInput } from "@/components/ApiKeyInput";
 
 const Index = () => {
   const [playlistUrl, setPlaylistUrl] = useState("");
@@ -14,10 +16,29 @@ const Index = () => {
   const [endVideo, setEndVideo] = useState("");
   const [playbackSpeed, setPlaybackSpeed] = useState("1");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<AnalysisResult | null>(null);
+  const [hasApiKey, setHasApiKey] = useState(false);
   const { toast } = useToast();
 
+  const handleApiKeySet = (apiKey: string) => {
+    youtubeService.setApiKey(apiKey);
+    setHasApiKey(true);
+    toast({
+      title: "API Key Set!",
+      description: "You can now analyze YouTube playlists.",
+    });
+  };
+
   const handleAnalyze = async () => {
+    if (!hasApiKey) {
+      toast({
+        title: "API Key Required",
+        description: "Please enter your YouTube API key first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!playlistUrl.trim()) {
       toast({
         title: "Please enter a playlist URL",
@@ -29,34 +50,45 @@ const Index = () => {
 
     setIsAnalyzing(true);
     
-    // Simulate API call for demo
-    setTimeout(() => {
-      setResults({
-        playlistTitle: "React Complete Course 2024",
-        channelName: "Tech Academy",
-        totalVideos: 85,
-        analyzedRange: `${startVideo} - ${endVideo || "85"}`,
-        originalDuration: "12h 45m",
-        adjustedDuration: calculateAdjustedTime("12h 45m", parseFloat(playbackSpeed)),
-        videoCount: parseInt(endVideo || "85") - parseInt(startVideo) + 1,
-      });
-      setIsAnalyzing(false);
+    try {
+      const analysisResult = await youtubeService.analyzePlaylist(
+        playlistUrl,
+        parseInt(startVideo) || 1,
+        endVideo ? parseInt(endVideo) : undefined,
+        parseFloat(playbackSpeed)
+      );
+      
+      setResults(analysisResult);
       toast({
         title: "Analysis Complete!",
         description: "Your playlist duration has been calculated.",
       });
-    }, 2000);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      toast({
+        title: "Analysis Failed",
+        description: error instanceof Error ? error.message : "Failed to analyze playlist",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const calculateAdjustedTime = (duration: string, speed: number) => {
-    // Simple calculation for demo - in real app this would be more sophisticated
-    const hours = parseInt(duration.split("h")[0]);
-    const minutes = parseInt(duration.split("h ")[1].split("m")[0]);
+    // Parse duration string (e.g., "12h 45m" or "45m")
+    const hourMatch = duration.match(/(\d+)h/);
+    const minuteMatch = duration.match(/(\d+)m/);
+    
+    const hours = hourMatch ? parseInt(hourMatch[1]) : 0;
+    const minutes = minuteMatch ? parseInt(minuteMatch[1]) : 0;
+    
     const totalMinutes = hours * 60 + minutes;
     const adjustedMinutes = Math.round(totalMinutes / speed);
     const newHours = Math.floor(adjustedMinutes / 60);
     const newMins = adjustedMinutes % 60;
-    return `${newHours}h ${newMins}m`;
+    
+    return newHours > 0 ? `${newHours}h ${newMins}m` : `${newMins}m`;
   };
 
   return (
@@ -84,6 +116,9 @@ const Index = () => {
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">
+          {/* API Key Input */}
+          <ApiKeyInput onApiKeySet={handleApiKeySet} hasApiKey={hasApiKey} />
+
           {/* Input Card */}
           <Card className="bg-white/10 backdrop-blur-lg border-white/20 shadow-2xl">
             <CardHeader>
@@ -160,7 +195,7 @@ const Index = () => {
               {/* Analyze Button */}
               <Button
                 onClick={handleAnalyze}
-                disabled={isAnalyzing}
+                disabled={isAnalyzing || !hasApiKey}
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 {isAnalyzing ? (
