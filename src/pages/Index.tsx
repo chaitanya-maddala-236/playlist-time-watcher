@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Clock, Play, Youtube, Calculator, Zap, Settings } from "lucide-react";
+import { Clock, Play, Youtube, Calculator, Zap, Settings, Timer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { youtubeService, type AnalysisResult } from "@/services/youtubeService";
 import { ApiKeyInput } from "@/components/ApiKeyInput";
@@ -106,7 +105,7 @@ const Index = () => {
         <div className="text-center mb-12">
           <div className="flex justify-center items-center gap-3 mb-4">
             <div className="p-4 bg-gradient-to-r from-red-500 to-pink-500 rounded-3xl shadow-2xl">
-              <Youtube className="h-10 w-10 text-white" />
+              <Timer className="h-10 w-10 text-white" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
               Playlist Time Analyzer
